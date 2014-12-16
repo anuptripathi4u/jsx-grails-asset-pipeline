@@ -3,8 +3,11 @@
  *
  */
 
-package asset.pipeline.jsx
+package asset.pipeline.processors
 
+import asset.pipeline.AbstractProcessor
+import asset.pipeline.AssetCompiler
+import asset.pipeline.AssetFile
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.Function
 import org.mozilla.javascript.NativeObject
@@ -19,13 +22,14 @@ import org.springframework.core.io.ClassPathResource
 // using existing javascript in-browser compiler
 // Code here adapted from https://gist.github.com/mingfang/3784a0a6e58c24dda687
 // and https://github.com/bertramdev/coffee-grails-asset-pipeline
-class JsxProcessor {
+class JsxProcessor extends AbstractProcessor {
   Scriptable globalScope
   ClassLoader classLoader
   Scriptable exports
   Function transform
 
-  JsxProcessor(precompiler=false){
+  JsxProcessor(AssetCompiler precompiler) {
+    super(precompiler)
     try {
       classLoader = getClass().getClassLoader()
 
@@ -52,10 +56,10 @@ class JsxProcessor {
     }
   }
 
-  def process(input, assetFile) {
+  String process(String inputText, AssetFile assetFile) {
     try {
       def cx = Context.enter()
-      NativeObject result = transform.call(cx, globalScope, exports, [input].toArray())
+      NativeObject result = transform.call(cx, globalScope, exports, [inputText].toArray())
       return result.get("code").toString()
     } catch (Exception e) {
       throw new Exception("""
