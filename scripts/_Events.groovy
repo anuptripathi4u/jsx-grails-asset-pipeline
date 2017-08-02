@@ -1,3 +1,3 @@
 eventAssetPrecompileStart = { assetConfig ->
-  assetConfig.specs << 'asset.pipeline.jsx.JsxAssetFile'
+  assetConfig.specs << 'asset.pipeline.JsxAssetFile'
 }
